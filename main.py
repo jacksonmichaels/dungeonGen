@@ -1,6 +1,8 @@
 from graphics import *
+import os
 
 win = GraphWin("Game")
+
 
 pt = Point(100, 50)
 
@@ -17,3 +19,7 @@ line.draw(win)
 
 rect = Rectangle(Point(20, 10), pt)
 rect.draw(win)
+
+
+
+os.system("pause")
