@@ -6,9 +6,9 @@ import sys
 
 
 #Constants:
-WINDOW_WIDTH = 2000
-WINDOW_HEIGHT = 1000
-MIN_SIZE = 1000
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 600
+MIN_SIZE = 10
 
 
 
@@ -110,7 +110,7 @@ class BSP:
 
 
 
-        if (left.getSize('a') < MIN_SIZE):
+        if (min(left.getSize()[0], left.getSize()[1]) < MIN_SIZE):
 
             room = randRoom(left.getSize()[0], left.getSize()[1])
 
@@ -118,7 +118,7 @@ class BSP:
 
             room.draw(self.win)
 
-            Rectangle(node.left.tl, node.left.br).draw(self.win)
+            #Rectangle(node.left.tl, node.left.br).draw(self.win)
 
             node.left.room = room
             self.rooms += 1
@@ -127,7 +127,7 @@ class BSP:
             self.generate(node.left)
 
 
-        if (right.getSize('a') < MIN_SIZE):
+        if (min(right.getSize()[0], right.getSize()[1]) < MIN_SIZE):
 
             room = randRoom(right.getSize()[0], right.getSize()[1])
 
@@ -135,7 +135,7 @@ class BSP:
 
             room.draw(self.win)
 
-            Rectangle(node.right.tl, node.right.br).draw(self.win)
+            #Rectangle(node.right.tl, node.right.br).draw(self.win)
 
 
             node.right.room = room
@@ -170,7 +170,7 @@ class BSP:
 
             link = Line(pair[0].getCenter(), pair[1].getCenter())
 
-            link.setWidth(10)
+            link.setWidth(2)
 
             link.draw(self.win)
 
