@@ -9,6 +9,9 @@ import sys
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 600
 MIN_SIZE = 10
+MIN_SIZE = 100
+DRAW_GRID = True
+PATH_WIDTH = 1
 
 
 
@@ -118,7 +121,9 @@ class BSP:
 
             room.draw(self.win)
 
-            #Rectangle(node.left.tl, node.left.br).draw(self.win)
+
+            if (DRAW_GRID):
+                Rectangle(node.left.tl, node.left.br).draw(self.win)
 
             node.left.room = room
             self.rooms += 1
@@ -135,7 +140,9 @@ class BSP:
 
             room.draw(self.win)
 
-            #Rectangle(node.right.tl, node.right.br).draw(self.win)
+
+            if (DRAW_GRID):
+                Rectangle(node.right.tl, node.right.br).draw(self.win)
 
 
             node.right.room = room
@@ -170,7 +177,7 @@ class BSP:
 
             link = Line(pair[0].getCenter(), pair[1].getCenter())
 
-            link.setWidth(2)
+            link.setWidth(PATH_WIDTH)
 
             link.draw(self.win)
 
