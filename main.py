@@ -8,10 +8,9 @@ import sys
 #Constants:
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 600
-MIN_SIZE = 10
-MIN_SIZE = 100
-DRAW_GRID = True
-PATH_WIDTH = 1
+MIN_SIZE = 200
+DRAW_GRID = False
+PATH_WIDTH = MIN_SIZE / 25
 
 
 
@@ -21,7 +20,8 @@ class Room:
         self.botR = br
 
         self.shape = Rectangle(self.topL, self.botR)
-        self.shape.setFill(color_rgb(256, 256, 256))
+
+        self.shape.setFill(color_rgb(random.randrange(255),random.randrange(255),random.randrange(255)))
 
     def draw(self, window):
         self.shape.draw(window)
@@ -177,7 +177,9 @@ class BSP:
 
             link = Line(pair[0].getCenter(), pair[1].getCenter())
 
+
             link.setWidth(PATH_WIDTH)
+            link.setFill(color_rgb(random.randrange(255),random.randrange(255),random.randrange(255)))
 
             link.draw(self.win)
 
