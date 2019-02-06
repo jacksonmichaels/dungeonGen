@@ -8,9 +8,10 @@ import sys
 #Constants:
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 600
-MIN_SIZE = 200
+MIN_SIZE = 100
 DRAW_GRID = False
 PATH_WIDTH = MIN_SIZE / 25
+COLORFUL = False
 
 
 
@@ -21,7 +22,12 @@ class Room:
 
         self.shape = Rectangle(self.topL, self.botR)
 
-        self.shape.setFill(color_rgb(random.randrange(255),random.randrange(255),random.randrange(255)))
+        if (COLORFUL):
+            self.color = color_rgb(random.randrange(255),random.randrange(255),random.randrange(255))
+        else:
+            self.color = color_rgb(0,0,0)
+
+        self.shape.setFill(self.color)
 
     def draw(self, window):
         self.shape.draw(window)
@@ -176,12 +182,26 @@ class BSP:
             pair = self.closestRooms(node.left.childRooms, node.right.childRooms)
 
             link = Line(pair[0].getCenter(), pair[1].getCenter())
+            midPoint = link.getCenter()
 
+            if (COLORFUL):
+                line1 = Line(pair[0].getCenter(), midPoint)
+                line2 = Line(midPoint, pair[1].getCenter())
 
-            link.setWidth(PATH_WIDTH)
-            link.setFill(color_rgb(random.randrange(255),random.randrange(255),random.randrange(255)))
+                line1.setFill(pair[0].color)
+                line2.setFill(pair[1].color)
 
-            link.draw(self.win)
+                line1.setWidth(PATH_WIDTH)
+                line2.setWidth(PATH_WIDTH)
+
+                line1.draw(self.win)
+                line2.draw(self.win)
+            else:
+                link.setWidth(PATH_WIDTH)
+                link.draw(self.win)
+
+            node.childRooms.append(Room(midPoint,midPoint))
+
 
     def closestRooms(self, aRooms, bRooms):
         minDist = max(WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -204,7 +224,6 @@ def getDist(pointA, pointB):
 
     return hyp
 
-
 def addPoints(a, b):
     ret = Point(a.x + b.x, a.y + b.y)
 
@@ -221,6 +240,8 @@ def randRoom(width, height):
     return room
 
 win = GraphWin("Game", WINDOW_WIDTH, WINDOW_HEIGHT)
+if (COLORFUL):
+    win.setBackground(color_rgb(0,0,0))
 
 tree = BSP(MIN_SIZE, win)
 
