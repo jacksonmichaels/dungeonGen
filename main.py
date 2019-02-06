@@ -6,15 +6,16 @@ import sys
 
 
 #Constants:
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 600
-MIN_SIZE = 100
-DRAW_GRID = False
-PATH_WIDTH = MIN_SIZE / 25
-COLORFUL = False
+WINDOW_WIDTH = 600              #width of window
+WINDOW_HEIGHT = 600             #height of window
+MIN_SIZE = 150                  #minimum width or height allowed in a cell
+DRAW_GRID = False               #draws the cell outlines
+PATH_WIDTH = MIN_SIZE / 25      #width of the hallways, its set automatically but i included it so it can be changed if needed
+COLORFUL = False                #sets the graphics to be colorful or black and white
+RIGHT_ANGLE_HALL = True         #chooses if the system will make all halls virtical or horizontal. has issues when mixed with colorful
 
 
-
+#Room class used as the actual room inside cells
 class Room:
     def __init__(self, tl, br):
         self.topL = tl
@@ -44,6 +45,7 @@ class Room:
     def getCenter(self):
         return Point((self.topL.x + self.botR.x)/2, (self.topL.y + self.botR.y)/2)
 
+#node class for tree structure
 class Node:
     def __init__(self, topLeft, botRight, left = None, right = None, dir = False, room = None, id=""):
         self.tl = topLeft
@@ -52,7 +54,7 @@ class Node:
         self.left = left
         self.right = right
 
-        self.dir = dir
+        self.dir = dir      #directioon of the splpit this node made to make its children
 
         self.room = None
 
@@ -60,16 +62,15 @@ class Node:
 
         self.room = room
 
-        self.childRooms = []
+        self.childRooms = []    #all of the rooms under this node in the treee
         self.id = id
 
-        self.text = Text(Point(self.tl.x + 50, self.tl.y + 20), id)
 
     def getSize(self, mode = 'd'):
         wide = self.br.x - self.tl.x
         tall = self.br.y - self.tl.y
 
-        if (mode == 'd'):
+        if (mode == 'd'):           #this is to pick if you want the area or a tuple of the width and height
             return (wide, tall)
         else:
             return wide * tall
@@ -81,9 +82,8 @@ class BSP:
 
         self.head = Node(Point(0, 0), Point(WINDOW_WIDTH, WINDOW_HEIGHT), id = "")
 
-        self.rooms = 0
 
-
+    #wrapper function to do all of the generation
     def makeMap(self):
         self.generate(self.head)
 
@@ -91,11 +91,11 @@ class BSP:
 
         self.connectRooms(self.head)
 
+    #function to make the tree struture and generate the rooms inside each leaf
     def generate(self, node):
         (wide, tall) = node.getSize()
-        if (node.dir):
-
-            line = int(random.randrange(0, wide) * 0.4 + wide * 0.3)
+        if (node.dir):          #if the node im looking at is to be split horizontally
+            line = int(random.randrange(0, wide) * 0.4 + wide * 0.3)        #the line that will be used to split the cell
 
             left = Node(node.tl, Point(node.tl.x + line, node.br.y), dir = not node.dir, id = node.id + 'L ')
 
@@ -132,7 +132,6 @@ class BSP:
                 Rectangle(node.left.tl, node.left.br).draw(self.win)
 
             node.left.room = room
-            self.rooms += 1
 
         else:
             self.generate(node.left)
@@ -152,7 +151,6 @@ class BSP:
 
 
             node.right.room = room
-            self.rooms += 1
 
         else:
             self.generate(node.right)
@@ -181,24 +179,27 @@ class BSP:
 
             pair = self.closestRooms(node.left.childRooms, node.right.childRooms)
 
+            
             link = Line(pair[0].getCenter(), pair[1].getCenter())
-            midPoint = link.getCenter()
+            if (RIGHT_ANGLE_HALL == False):
+                midPoint = link.getCenter()
+            else:
+                midPoint = Point(pair[0].getCenter().x, pair[1].getCenter().y)
+
+            line1 = Line(pair[0].getCenter(), midPoint)
+            line2 = Line(midPoint, pair[1].getCenter())
 
             if (COLORFUL):
-                line1 = Line(pair[0].getCenter(), midPoint)
-                line2 = Line(midPoint, pair[1].getCenter())
-
                 line1.setFill(pair[0].color)
                 line2.setFill(pair[1].color)
 
-                line1.setWidth(PATH_WIDTH)
-                line2.setWidth(PATH_WIDTH)
+            line1.setWidth(PATH_WIDTH)
+            line2.setWidth(PATH_WIDTH)
 
-                line1.draw(self.win)
-                line2.draw(self.win)
-            else:
-                link.setWidth(PATH_WIDTH)
-                link.draw(self.win)
+            line1.draw(self.win)
+            line2.draw(self.win)
+
+
 
             node.childRooms.append(Room(midPoint,midPoint))
 
